@@ -8,6 +8,8 @@ Player::Player(double posX_, double posY_, double degree_)
     isAlive = true;
     moveState = STAND;
     angularVelocity = 0;
+    isCeasefire = false;
+    timeCeasefire = 0;
 }
 
 Player::~Player()
@@ -35,7 +37,16 @@ void Player::update(float deltaTime)
     {
         posX -= velocity / 2 * std::cos(degrees * M_PI / 180) * deltaTime;
         posY -= velocity / 2 * std::sin(degrees * M_PI / 180) * deltaTime;
-    }  
+    }
+    if(isCeasefire)
+    {
+        timeCeasefire += deltaTime;
+        if(timeCeasefire > 0.25)
+        {
+            isCeasefire = false;
+            timeCeasefire = 0;
+        }
+    }
 }
 
 void Player::render()
@@ -52,10 +63,13 @@ void Player::render()
 }
 
 void Player::shoot()
-{
-
-    //recoil
-    degrees += rand() % 9 - 4;
-    Bullet* bullet = new Bullet(posX + 16 + 30*std::cos((-degrees + angleBetweenGunAndPlayer)*M_PI/180), posY + 22 +30*std::cos((90 + angleBetweenGunAndPlayer - degrees)*M_PI/180), degrees);
-    bullets.push_back(bullet);
+{  
+    if(!isCeasefire)
+    {
+        //recoil
+        degrees += rand() % 11 - 5;
+        Bullet* bullet = new Bullet(posX + 16 + 30*std::cos((-degrees + angleBetweenGunAndPlayer)*M_PI/180), posY + 22 +30*std::cos((90 + angleBetweenGunAndPlayer - degrees)*M_PI/180), degrees);
+        bullets.push_back(bullet);
+        isCeasefire = true;
+    }
 }

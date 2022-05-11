@@ -46,7 +46,7 @@ void GamePVP::createPlayers()
 
 void GamePVP::createGUI()
 {
-    createButton("button_music_off.png", {1200, 20}, [](){});
+    createButton("button_music_on.png", {1200, 20}, [](){});
     createButton("button_home.png", {1240, 762}, std::bind(&GamePVP::goToMenu, this));
 }
 

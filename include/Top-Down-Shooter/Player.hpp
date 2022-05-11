@@ -37,4 +37,6 @@ class Player
         bool isAlive;
         MoveState moveState;
         std::vector<Bullet*> bullets;
+        bool isCeasefire;
+        double timeCeasefire;
 };
