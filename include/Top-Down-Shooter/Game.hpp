@@ -12,8 +12,6 @@ public:
     ~Game();
     void run();
 private:
-    bool quit;
-
     void processInput();
     void update(float deltaTime);
     void render();

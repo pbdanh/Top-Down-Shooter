@@ -39,6 +39,9 @@ private:
     double degrees_1 = 0;
     double omega_1 = 0;
     moveState state_1 = STAND;
+    bool isP1Alive = true;
+    
+    int ammo_1 = 4;
     //
     SDL_Texture* p2;
     double x_2 = 1280-100, y_2 = 720-100;

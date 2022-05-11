@@ -2,9 +2,12 @@
 
 #include "StartScreen.hpp"
 
+extern bool gQuit;
+
 StartScreen::StartScreen(StateManager* stateManager) : GameScreen(stateManager)
 {
-    loadMedia();
+    background = AssetManager::getInstance()->getTexture("start_screen_background.png");
+    createGUI();
 }
 
 StartScreen::~StartScreen()
@@ -13,56 +16,52 @@ StartScreen::~StartScreen()
 
 void StartScreen::renderScreen()
 {
-    SDL_Rect desRect;
     SDL_RenderCopy(gWindow->getRenderer(), background, NULL, NULL);
-    desRect.x = 532;
-    desRect.y = 400;
-    desRect.w = 215;
-    desRect.h = 315;
-    SDL_RenderCopy(gWindow->getRenderer(), button, NULL, &desRect);
-    desRect.x = 320;
-    desRect.y = 100;
-    desRect.w = 640;
-    desRect.h = 212;
-    SDL_RenderCopy(gWindow->getRenderer(), logo, NULL, &desRect);
+    for(auto& component : GUIComponents)
+    {
+        component->render(gWindow->getRenderer());
+    }
 }
 
 void StartScreen::updateScreen(float deltaTime)
 {
 }
 
-void StartScreen::loadMedia()
-{
-    SDL_Surface* loadedSurface = IMG_Load("media/img/button.png");
-    int w, h;
-    button = SDL_CreateTextureFromSurface(gWindow->getRenderer(), loadedSurface);
-    SDL_QueryTexture(button, NULL, NULL, &w, &h);
-    std::cout << w << " " << h << std::endl;
-    if(button == NULL)
+void StartScreen::handleEvent(const SDL_Event& event)
+{ 
+    for(auto& component : GUIComponents)
     {
-        std::cout << SDL_GetError() << std::endl;
+        component->handleEvent(event);
     }
-    loadedSurface = IMG_Load("media/img/logo.png");
-    logo = SDL_CreateTextureFromSurface(gWindow->getRenderer(), loadedSurface);
-    loadedSurface = IMG_Load("media/img/ground.png");
-    background = SDL_CreateTextureFromSurface(gWindow->getRenderer(), loadedSurface);
-    TTF_Font* font = TTF_OpenFont("media/fonts/arial.ttf", 500);
-    font = TTF_OpenFont("media/fonts/arial.ttf", 200);
-    SDL_Surface* textSurface = TTF_RenderText_Solid(font, "START", {0, 0, 0});
-    textStart = SDL_CreateTextureFromSurface(gWindow->getRenderer(), textSurface);
-    SDL_QueryTexture(textStart, NULL, NULL, &w, &h);
-    std::cout << w << " " << h << std::endl;
 }
 
-void StartScreen::handleEvent(const SDL_Event& event)
+void StartScreen::createGUI()
 {
-    if(event.type == SDL_MOUSEBUTTONDOWN)
-    {
-        int x, y;
-        SDL_GetMouseState(&x, &y);
-        if(x >= 555 && x <= 735 && y >= 400 && y <= 487)
-        {
-            stateManager->switchScreen(StateManager::Screen::GamePVP);
-        }
-    }
+    createButton("button_pvp.png", {533, 400}, std::bind(&StartScreen::startPVPGame, this));
+    createButton("button_pve.png", {533, 475}, std::bind(&StartScreen::startPVEGame, this));
+    createButton("button_exit.png", {533, 550}, []() { gQuit = true; });
+    createButton("button_music_off.png", {1200, 20}, [](){});
+}
+
+void StartScreen::createButton(const std::string fileName, SDL_Point position, std::function<void()> callback)
+{
+    GUIComponent* button = new Button(fileName, position, callback);
+    GUIComponents.push_back(button);
+}
+
+void StartScreen::startPVPGame()
+{
+    stateManager->switchScreen(StateManager::Screen::GamePVP);
+}
+
+void StartScreen::startPVEGame()
+{
+    //stateManager->switchScreen(StateManager::Screen::GamePVE);
+    std::cout << "PVE game not implemented yet" << std::endl;
+}
+
+void StartScreen::exitGame()
+{
+    //stateManager->exitGame();
+    std::cout << "Exiting game..." << std::endl;
 }

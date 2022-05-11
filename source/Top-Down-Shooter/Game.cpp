@@ -4,7 +4,8 @@
 
 #include "Game.hpp"
 
-Window *gWindow = NULL;;
+Window *gWindow = NULL;
+bool gQuit = false;
 
 Game::Game()
 {
@@ -12,11 +13,11 @@ Game::Game()
     if(!gWindow->init())
     {
         std::cout << "Failed to initialize window" << std::endl;
-        quit = true;
+        gQuit = true;
         return;
     }
     stateManager = new StateManager();
-    quit = false;
+    gQuit = false;
 }
 
 Game::~Game()
@@ -24,10 +25,10 @@ Game::~Game()
 }
 
 void Game::run()
-{
+{   
 	stateManager->switchScreen(StateManager::Screen::StartScreen);
-	while (!quit)
-	{
+	while (!gQuit)
+    {
 		processInput();
 		update(200.0f / 60.0f);
 		render();
@@ -41,7 +42,7 @@ void Game::processInput()
     {
         if(e.type == SDL_QUIT)
         {
-            quit = true;
+            gQuit = true;
         }
         else
         {

@@ -1,2 +1,2 @@
 All:
-	g++ source/main.cpp source/General/*.cpp source/Screens/*.cpp source/Top-Down-Shooter/Game.cpp -ISDL2/include/SDL2 -LSDL2/lib -Iinclude/General -Iinclude/Screens -Iinclude/Top-Down-Shooter -lmingw32 -lSDL2main -lSDL2 -lSDL2_image -lSDL2_ttf -lSDL2_mixer -o Top-Down-Shooter.exe
+	g++ source/main.cpp source/General/*.cpp source/GUI/*.cpp source/Screens/*.cpp source/Top-Down-Shooter/Game.cpp -ISDL2/include/SDL2 -LSDL2/lib -Iinclude/General -Iinclude/GUI -Iinclude/Screens -Iinclude/Top-Down-Shooter -lmingw32 -lSDL2main -lSDL2 -lSDL2_image -lSDL2_ttf -lSDL2_mixer -o Top-Down-Shooter.exe

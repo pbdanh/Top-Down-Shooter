@@ -2,6 +2,16 @@
 #include <cmath>
 #include <time.h>
 
+SDL_TimerID ID_1;
+
+Uint32 loadAmmo(Uint32 interval, void* param)
+{
+    int* ammo = reinterpret_cast<int*>(param);
+    *ammo = std::min(*ammo + 1, 4);
+    std::cout << "load!! " << *ammo << std::endl;
+    ID_1 = SDL_AddTimer(1000, loadAmmo, ammo);
+}
+
 bool checkCollision(SDL_Rect a, SDL_Rect b)
 {
     //The sides of the rectangles
@@ -49,6 +59,8 @@ bool checkCollision(SDL_Rect a, SDL_Rect b)
 GamePVP::GamePVP(StateManager* stateManager) : GameScreen(stateManager)
 {
     loadMedia();
+    std::cout << ammo_1;
+    ID_1 = SDL_AddTimer(1000, loadAmmo, reinterpret_cast<void*>(&ammo_1));
 }
 
 GamePVP::~GamePVP()
@@ -76,11 +88,14 @@ void GamePVP::renderScreen()
         SDL_RenderCopyEx(gWindow->getRenderer(), bullet, NULL, &desRect, i->degree, NULL, SDL_FLIP_NONE);
     }
     
+    if(isP1Alive)
+    {
     desRect.x = x_1;
     desRect.y = y_1;
     desRect.w = 50;
     desRect.h = 43;
     SDL_RenderCopyEx(gWindow->getRenderer(), p1, NULL, &desRect, degrees_1, &center, SDL_FLIP_NONE);
+    }
     desRect.x = x_2;
     desRect.y = y_2;
     desRect.w = 50;
@@ -88,6 +103,12 @@ void GamePVP::renderScreen()
     SDL_RenderCopyEx(gWindow->getRenderer(), p2, NULL, &desRect, degrees_2, &center, SDL_FLIP_NONE);
     
 }
+
+    Uint32 respawn(Uint32 interval, void* param)
+    {
+        bool *isAlive = reinterpret_cast<bool*>(param);
+        *isAlive = true;
+    }
 
 void GamePVP::updateScreen(float deltaTime)
 {
@@ -183,6 +204,11 @@ void GamePVP::updateScreen(float deltaTime)
         p1_hitbox.h = 43;
         if(checkCollision(bullet, p1_hitbox))
         {
+            
+            isP1Alive = false;
+            
+            ID_1 = SDL_AddTimer(3000, respawn, reinterpret_cast<void*>(&isP1Alive));
+            std::cout << isP1Alive << std::endl;
             x_1 = 100;
             y_1 = 100;
             degrees_1 = 0;
@@ -243,8 +269,14 @@ void GamePVP::handleEvent(const SDL_Event& event)
                 state_2 = moveState(int(state_2) - 1);
                 break;
             case SDLK_SPACE:
+                if(ammo_1 > 0)
+                {
+                    ammo_1--;
+                    std::cout << ammo_1 << std::endl;
                 Mix_PlayChannel(-1, bulletSound, 0);
                 bullets_1.push_back(new Bullet(x_1 + 16 + 30*std::cos((-degrees_1 + phi)*M_PI/180) - 20, y_1 + 22 + 30*std::cos((90 + phi - degrees_1) * M_PI / 180) - 3, degrees_1));
+                
+                }
                 break;
             case SDLK_KP_ENTER:
                 Mix_PlayChannel(-1, bulletSound, 0);

@@ -1,7 +1,11 @@
 #pragma once
 
+#include <vector>
+
 #include "GameScreen.hpp"
 #include "Window.hpp"
+#include "GUIComponent.hpp"
+#include "Button.hpp"
 
 extern Window* gWindow;
 
@@ -14,9 +18,11 @@ public:
     void updateScreen(float deltaTime);
     void handleEvent(const SDL_Event& event);
 private:
-    SDL_Texture* button;
-    SDL_Texture* logo;
-    SDL_Texture* textStart;
     SDL_Texture* background;
-    void loadMedia();
+    void createGUI();
+    std::vector<GUIComponent *> GUIComponents;
+    void createButton(const std::string fileName, SDL_Point position, std::function<void()> callback);
+    void startPVPGame();
+    void startPVEGame();
+    void exitGame();
 };

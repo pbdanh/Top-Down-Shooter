@@ -7,7 +7,7 @@
 #include <SDL_ttf.h>
 #include <SDL_mixer.h>
 
-#include "Setting.hpp"
+#include "Settings.hpp"
 
 class Window
 {
