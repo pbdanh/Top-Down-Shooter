@@ -11,7 +11,7 @@ public:
 
     virtual bool isSelectable() = 0;
 	virtual void handleEvent(const SDL_Event& e);
-    virtual void render(SDL_Renderer* renderer);
+    virtual void render();
 
 protected:
     SDL_Rect rect;

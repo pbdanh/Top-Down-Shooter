@@ -1,7 +1,12 @@
 #pragma once
 
+#include <vector>
+
 #include "SDL.h"
+
 #include "StateManager.hpp"
+#include "GUIComponent.hpp"
+#include "Button.hpp"
 
 class GameScreen
 {
@@ -18,4 +23,9 @@ public:
 
 protected:
     StateManager* stateManager;
+    std::vector<GUIComponent *> GUIComponents;
+    virtual void createGUI();
+    void createButton(const std::string fileName, SDL_Point position, std::function<void()> callback);
+    void renderWidget();
+    void handleWidgetEvent(const SDL_Event& event);
 };

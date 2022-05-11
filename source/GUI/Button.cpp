@@ -35,8 +35,8 @@ void Button::handleEvent(const SDL_Event& e)
     }
 }
 
-void Button::render(SDL_Renderer* renderer)
+void Button::render()
 {
-    SDL_RenderCopy(renderer, AssetManager::getInstance()->getTexture(fileName), NULL, &rect);
+    SDL_RenderCopy(gWindow->getRenderer(), AssetManager::getInstance()->getTexture(fileName), NULL, &rect);
 }
 

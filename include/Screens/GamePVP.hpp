@@ -20,5 +20,7 @@ public:
     void handleEvent(const SDL_Event& event);
 private:
     std::vector<Player*> players;
+    void createGUI();
     void createPlayers();
+    void goToMenu();
 };

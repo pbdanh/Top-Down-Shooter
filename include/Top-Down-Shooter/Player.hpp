@@ -29,7 +29,8 @@ class Player
         SDL_Texture* playerTexture;
         SDL_Point center = {16, 22};
         double angleBetweenGunAndPlayer = -17;
-        const double velocity = 1;
+        const double velocity = 200;
+        const double maxAngularVelocity = 75;
         double posX, posY;
         double degrees;
         double angularVelocity;

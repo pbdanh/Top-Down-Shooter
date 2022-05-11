@@ -16,10 +16,10 @@ void Player1::handleEvent(const SDL_Event& event)
         switch(event.key.keysym.sym)
         {
             case SDLK_a:
-                angularVelocity -= 0.5;
+                angularVelocity -= maxAngularVelocity;
                 break;
             case SDLK_d:
-                angularVelocity += 0.5;
+                angularVelocity += maxAngularVelocity;
                 break;
             case SDLK_w:
                 moveState = (MoveState)((int)moveState + 1);
@@ -39,10 +39,10 @@ void Player1::handleEvent(const SDL_Event& event)
             switch(event.key.keysym.sym)
             {
                 case SDLK_a:
-                    angularVelocity += 0.5;
+                    angularVelocity += maxAngularVelocity;
                     break;
                 case SDLK_d:
-                    angularVelocity -= 0.5;
+                    angularVelocity -= maxAngularVelocity;
                     break;
                 case SDLK_w:
                     moveState = (MoveState)((int)moveState - 1);

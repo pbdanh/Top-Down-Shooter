@@ -26,11 +26,14 @@ Game::~Game()
 
 void Game::run()
 {   
+    
 	stateManager->switchScreen(StateManager::Screen::StartScreen);
+    Uint32 deltaTime = SDL_GetTicks();
 	while (!gQuit)
     {
 		processInput();
-		update(200.0f / 60.0f);
+		update((SDL_GetTicks() - deltaTime)/1000.0f);
+        deltaTime = SDL_GetTicks();
 		render();
 	}
 }

@@ -3,6 +3,7 @@
 Bullet::Bullet(double posX_, double posY_, double degree_) : posX(posX_), posY(posY_), degree(degree_)
 {
     bulletTexture = AssetManager::getInstance()->getTexture("bullet.png");
+    Mix_PlayChannel(-1, AssetManager::getInstance()->getSoundBuffer("shoot_sound.wav"), 0);
 }
 
 Bullet::~Bullet()

@@ -6,7 +6,6 @@ extern bool gQuit;
 
 StartScreen::StartScreen(StateManager* stateManager) : GameScreen(stateManager)
 {
-    background = AssetManager::getInstance()->getTexture("start_screen_background.png");
     createGUI();
 }
 
@@ -16,11 +15,9 @@ StartScreen::~StartScreen()
 
 void StartScreen::renderScreen()
 {
-    SDL_RenderCopy(gWindow->getRenderer(), background, NULL, NULL);
-    for(auto& component : GUIComponents)
-    {
-        component->render(gWindow->getRenderer());
-    }
+    //render Background
+    SDL_RenderCopy(gWindow->getRenderer(), AssetManager::getInstance()->getTexture("start_screen_background.png"), NULL, NULL);
+    renderWidget();
 }
 
 void StartScreen::updateScreen(float deltaTime)
@@ -41,12 +38,6 @@ void StartScreen::createGUI()
     createButton("button_pve.png", {533, 475}, std::bind(&StartScreen::startPVEGame, this));
     createButton("button_exit.png", {533, 550}, []() { gQuit = true; });
     createButton("button_music_off.png", {1200, 20}, [](){});
-}
-
-void StartScreen::createButton(const std::string fileName, SDL_Point position, std::function<void()> callback)
-{
-    GUIComponent* button = new Button(fileName, position, callback);
-    GUIComponents.push_back(button);
 }
 
 void StartScreen::startPVPGame()

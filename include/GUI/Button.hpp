@@ -1,8 +1,12 @@
 #pragma once
 
+#include <functional>
+
 #include "GUIComponent.hpp"
 #include "AssetManager.hpp"
-#include <functional>
+#include "Window.hpp"
+
+extern Window* gWindow;
 
 class Button: public GUIComponent
 {
@@ -12,7 +16,7 @@ public:
 
     bool isSelectable();
     void handleEvent(const SDL_Event& e);
-    void render(SDL_Renderer* renderer);
+    void render();
 
 private:
     Mix_Chunk* buttonSound;

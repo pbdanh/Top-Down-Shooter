@@ -17,6 +17,6 @@ void GUIComponent::handleEvent(const SDL_Event& e)
 {
 }
 
-void GUIComponent::render(SDL_Renderer* renderer)
+void GUIComponent::render()
 {
 }

@@ -3,6 +3,7 @@
 #include <cmath>
 
 #include <SDL.h>
+#include <SDL_mixer.h>
 
 #include "Window.hpp"
 #include "AssetManager.hpp"
@@ -20,5 +21,5 @@ private:
     SDL_Texture* bulletTexture;
     double posX, posY;
     double degree;
-    const double velocity = 3;
+    const double velocity = 600;
 };

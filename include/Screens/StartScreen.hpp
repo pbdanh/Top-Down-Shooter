@@ -18,10 +18,7 @@ public:
     void updateScreen(float deltaTime);
     void handleEvent(const SDL_Event& event);
 private:
-    SDL_Texture* background;
     void createGUI();
-    std::vector<GUIComponent *> GUIComponents;
-    void createButton(const std::string fileName, SDL_Point position, std::function<void()> callback);
     void startPVPGame();
     void startPVEGame();
     void exitGame();
