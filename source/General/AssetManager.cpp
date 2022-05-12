@@ -99,3 +99,39 @@ Mix_Chunk * & AssetManager::getSoundBuffer(std::string const & filename)
 		return soundBuffer;
 	}
 }
+
+int** & AssetManager::getMap(std::string const & filename)
+{
+	std::map<std::string, int**> & mapMap = singletonInstance->managerMaps;
+
+	std::map<std::string, int**>::iterator pairFound = mapMap.find(filename);
+	if (pairFound != mapMap.end())
+	{
+		return pairFound->second;
+	}
+	else
+	{
+		int** & map = mapMap[filename];
+		std::ifstream file((MAPS_PATH + filename).c_str());
+		if (file.is_open())
+		{
+			int width, height;
+			file >> width >> height;
+			map = new int*[height];
+			for (int i = 0; i < height; i++)
+			{
+				map[i] = new int[width];
+				for (int j = 0; j < width; j++)
+				{
+					file >> map[i][j];
+				}
+			}
+			file.close();
+		}
+		else
+		{
+			std::cout << "Failed to load map: " << filename << std::endl;
+		}
+		return map;
+	}
+}

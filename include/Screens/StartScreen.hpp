@@ -22,4 +22,5 @@ private:
     void startPVPGame();
     void startPVEGame();
     void exitGame();
+    void switchAudioMode();
 };

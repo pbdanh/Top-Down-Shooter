@@ -27,7 +27,7 @@ Game::~Game()
 void Game::run()
 {   
     
-	stateManager->switchScreen(StateManager::Screen::StartScreen);
+	stateManager->switchScreen(StateManager::Screen::GamePVP);
     Uint32 deltaTime = SDL_GetTicks();
 	while (!gQuit)
     {

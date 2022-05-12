@@ -2,6 +2,7 @@
 
 #include <cmath>
 #include <vector>
+#include <stack>
 
 #include <SDL.h>
 
@@ -16,7 +17,7 @@ class Player
         Player(double posX_, double posY_, double degree_);
         ~Player();
         virtual void handleEvent(const SDL_Event& event);
-        void update(float deltaTime);
+        void update(float deltaTime, int** map);
         void render();
         enum MoveState
         {

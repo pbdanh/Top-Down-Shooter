@@ -37,7 +37,7 @@ void StartScreen::createGUI()
     createButton("button_pvp.png", {533, 400}, std::bind(&StartScreen::startPVPGame, this));
     createButton("button_pve.png", {533, 475}, std::bind(&StartScreen::startPVEGame, this));
     createButton("button_exit.png", {533, 550}, []() { gQuit = true; });
-    createButton("button_music_on.png", {1200, 20}, [](){});
+    createButton("button_music_on.png", {1200, 20}, std::bind(&StartScreen::switchAudioMode, this));
 }
 
 void StartScreen::startPVPGame()
@@ -55,4 +55,9 @@ void StartScreen::exitGame()
 {
     //stateManager->exitGame();
     std::cout << "Exiting game..." << std::endl;
+}
+
+void StartScreen::switchAudioMode()
+{
+    std::cout << "Audio mode switched" << std::endl;
 }

@@ -4,6 +4,7 @@ GamePVP::GamePVP(StateManager* stateManager) : GameScreen(stateManager)
 {   
     createPlayers();
     createGUI();
+    loadMap();
 }
 
 GamePVP::~GamePVP()
@@ -25,7 +26,7 @@ void GamePVP::updateScreen(float deltaTime)
 {
     for (auto player : players)
     {
-        player->update(deltaTime);
+        player->update(deltaTime, map);
     }
 }
 
@@ -40,17 +41,22 @@ void GamePVP::handleEvent(const SDL_Event& event)
 
 void GamePVP::createPlayers()
 {
-    players.push_back(new Player1(100, 100, 0));
+    players.push_back(new Player1(50, 100, 0));
     players.push_back(new Player2(1100, 700, 180));
 }
 
 void GamePVP::createGUI()
 {
     createButton("button_music_on.png", {1200, 20}, [](){});
-    createButton("button_home.png", {1240, 762}, std::bind(&GamePVP::goToMenu, this));
+    createButton("button_home.png", {1230, 752}, std::bind(&GamePVP::goToMenu, this));
 }
 
 void GamePVP::goToMenu()
 {
     stateManager->switchScreen(StateManager::Screen::StartScreen);
+}
+
+void GamePVP::loadMap()
+{
+    map = AssetManager::getInstance()->getMap("map_PVP.data");
 }

@@ -19,8 +19,10 @@ public:
     void updateScreen(float deltaTime);
     void handleEvent(const SDL_Event& event);
 private:
+    int** map;
     std::vector<Player*> players;
     void createGUI();
     void createPlayers();
     void goToMenu();
+    void loadMap();
 };

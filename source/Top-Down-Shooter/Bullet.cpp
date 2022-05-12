@@ -2,6 +2,8 @@
 
 Bullet::Bullet(double posX_, double posY_, double degree_) : posX(posX_), posY(posY_), degree(degree_)
 {
+    x0 = posX;
+    y0 = posY;
     bulletTexture = AssetManager::getInstance()->getTexture("bullet.png");
     Mix_PlayChannel(-1, AssetManager::getInstance()->getSoundBuffer("shoot_sound.wav"), 0);
 }
@@ -23,4 +25,12 @@ void Bullet::update(float deltaTime)
 {
     posX += velocity * std::cos(degree * M_PI / 180) * deltaTime;
     posY += velocity * std::sin(degree * M_PI / 180) * deltaTime;
+}
+
+SDL_Point Bullet::getPos()
+{
+    SDL_Point point;
+    point.x = posX;
+    point.y = posY;
+    return point;
 }
