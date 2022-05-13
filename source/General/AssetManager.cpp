@@ -56,22 +56,78 @@ SDL_Texture* & AssetManager::getTexture(std::string const & filename)
 	}
 }
 
-TTF_Font* & AssetManager::getFont(std::string const & filename)
+SDL_Texture* & AssetManager::getTexturefromText(std::string const & text_font_size_r_g_b)
+{
+	std::map<std::string, SDL_Texture *> & textureMap = singletonInstance->managerTextures;
+
+	std::map<std::string, SDL_Texture *>::iterator pairFound = textureMap.find(text_font_size_r_g_b);
+	if (pairFound != textureMap.end())
+	{
+		return pairFound->second;
+	}
+	else
+	{
+		SDL_Texture* &texture = textureMap[text_font_size_r_g_b];
+		std::stringstream ss;
+		ss << text_font_size_r_g_b;
+		std::string text;
+		std::string fontName;
+		std::string fontSize;
+		std::string r_;
+		std::string g_;
+		std::string b_;
+		std::getline(ss, text, ',');
+		std::getline(ss, fontName, ',');
+		std::getline(ss, fontSize, ',');
+		std::getline(ss, r_, ',');
+		std::getline(ss, g_, ',');
+		std::getline(ss, b_, ',');
+		Uint8 r = std::stoi(r_);
+		Uint8 g = std::stoi(g_);
+		Uint8 b = std::stoi(b_);
+		SDL_Color textColor = { r, g, b };
+		SDL_Surface* loadedSurface = TTF_RenderText_Solid(getFont(fontName+","+fontSize), text.c_str(), textColor);
+		if (loadedSurface == NULL)
+		{
+			std::cout << "Failed to load text: " << text_font_size_r_g_b << std::endl;
+			std::cout << "Error: " << TTF_GetError() << std::endl;
+		}
+		else
+		{
+			texture = SDL_CreateTextureFromSurface(gWindow->getRenderer(), loadedSurface);
+			SDL_FreeSurface(loadedSurface);
+			if (texture == NULL)
+			{
+				std::cout << "Failed to create texture: " << text_font_size_r_g_b << std::endl;
+				std::cout << "Error: " << SDL_GetError() << std::endl;
+			}
+		}
+		return texture;
+	}
+}
+
+TTF_Font* & AssetManager::getFont(std::string const & font_size)
 {
 	std::map<std::string, TTF_Font*> & fontMap = singletonInstance->managerFonts;
 
-	std::map<std::string, TTF_Font*>::iterator pairFound = fontMap.find(filename);
+	std::map<std::string, TTF_Font*>::iterator pairFound = fontMap.find(font_size);
 	if (pairFound != fontMap.end())
 	{
 		return pairFound->second;
 	}
 	else
 	{
-		TTF_Font* & font = fontMap[filename];
-		font = TTF_OpenFont((FONTS_PATH + filename).c_str(), 300);
+		TTF_Font* & font = fontMap[font_size];
+		std::stringstream ss;
+		ss.str(font_size);
+		std::string fontName;
+		std::getline(ss, fontName, ',');
+		int fontSize;
+		ss >> fontSize;
+		font = TTF_OpenFont((FONTS_PATH + fontName).c_str(), fontSize);
 		if (font == NULL)
 		{
-			std::cout << "Failed to load font: " << filename << std::endl;
+			std::cout << "Failed to load font: " << font_size << std::endl;
 			std::cout << "Error: " << TTF_GetError() << std::endl;
 		}
 		return font;

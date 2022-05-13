@@ -3,6 +3,7 @@
 #include <map>
 #include <string>
 #include <fstream>
+#include <sstream>
 
 #include <SDL.h>
 #include <SDL_image.h>
@@ -15,7 +16,8 @@ class AssetManager
 public:
 	static AssetManager * getInstance();
 	static SDL_Texture * & getTexture(std::string const & filename);
-	static TTF_Font * & getFont(std::string const & filename);
+	static SDL_Texture* & getTexturefromText(std::string const & text_font_size_r_g_b);
+	static TTF_Font * & getFont(std::string const & font_size);
 	static Mix_Chunk * & getSoundBuffer(std::string const & filename);
 	static int** & getMap(std::string const & filename);
 

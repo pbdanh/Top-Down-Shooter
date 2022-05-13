@@ -3,6 +3,7 @@
 Player2::Player2(double posX_, double posY_, double degree_) : Player(posX_, posY_, degree_)
 {
     playerTexture = AssetManager::getInstance()->getTexture("p2.png");
+    playerNumber = 2;
 }
 
 Player2::~Player2()
@@ -33,7 +34,12 @@ void Player2::handleEvent(const SDL_Event& event)
                     shoot();
                 }
                 break;
-        }
+            case SDLK_m:
+                showScore += 1;
+                break;
+            case SDLK_KP_0:
+                showScore += 1;
+                break;        }
     }
     else
     {
@@ -53,6 +59,12 @@ void Player2::handleEvent(const SDL_Event& event)
                 case SDLK_DOWN:
                     moveState = (MoveState)((int)moveState + 1);
                     break;
+                    case SDLK_m:
+                showScore -= 1;
+                break;
+            case SDLK_KP_0:
+                showScore -= 1;
+                break;
             }
         }
     }

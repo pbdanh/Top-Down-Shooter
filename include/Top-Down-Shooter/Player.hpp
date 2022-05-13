@@ -3,6 +3,7 @@
 #include <cmath>
 #include <vector>
 #include <stack>
+#include <iomanip>
 
 #include <SDL.h>
 #include <SDL_mixer.h>
@@ -32,6 +33,9 @@ class Player
         int getScore();
         void setPos(double posX_, double posY_);
         bool isAlive;
+        void renderScore();
+        void renderRespawn();
+        void renderInfo();
     protected:
         void shoot();
         SDL_Texture* playerTexture;
@@ -51,4 +55,7 @@ class Player
         int score;
         bool isProtected;
         double timeProtected;
+        int showScore;
+        double timeShowInfo;
+        int playerNumber;
 };

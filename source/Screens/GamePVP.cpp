@@ -6,7 +6,7 @@ void drawRect(SDL_Renderer* renderer, SDL_Rect rect, SDL_Color color);
 GamePVP::GamePVP(StateManager* stateManager) : GameScreen(stateManager)
 {   
     player1 = new Player1(50, 50, 90);
-    player2 = new Player2(50, 100, 0);
+    player2 = new Player2(1280-50-30, 800-50-30, -90);
     createGUI();
     loadMap();
     timeOut = 120;
@@ -20,6 +20,7 @@ void GamePVP::renderScreen()
 {
     //render background
     SDL_RenderCopy(gWindow->getRenderer(),AssetManager::getInstance()->getTexture("map_test.png"), NULL, NULL);
+    
     //TODO: remove
     if(gDevMode)
     {
@@ -39,13 +40,27 @@ void GamePVP::renderScreen()
             }
         }
     }
-    std::cout << (int)timeOut << " ";//TODO: 120;
-    std::cout << "Player1: ";
+    // std::cout << (int)timeOut << " ";//TODO: 120;
+    // std::cout << "Player1: ";
     player1->render();
-    std::cout << "Player2: ";
+    // std::cout << "Player2: ";
     player2->render();
-    std::cout << std::endl;
+    // std::cout << std::endl;
     renderWidget();
+    //render time remaining
+    {
+        std::stringstream ss;
+        int minutes = (int)timeOut / 60;
+        int seconds = (int)timeOut % 60;
+        ss << minutes << ":" << seconds/10 << seconds % 10;
+        std::string time = ss.str();
+        SDL_Texture* text = AssetManager::getInstance()->getTexturefromText(time+",Monique-RegularRound20.otf,40,255,255,255");
+        SDL_Rect rect;
+        SDL_QueryTexture(text, NULL, NULL, &rect.w, &rect.h);
+        rect.x = 20;
+        rect.y = 20;
+        SDL_RenderCopy(gWindow->getRenderer(), text, NULL, &rect);
+    }
 }
 
 void GamePVP::updateScreen(float deltaTime)

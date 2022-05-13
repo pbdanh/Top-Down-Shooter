@@ -71,6 +71,8 @@ Player::Player(double posX_, double posY_, double degree_)
     score = 0;
     isProtected = true;
     timeProtected = 4;
+    showScore = 0;
+    timeShowInfo = 4;
 }
 
 Player::~Player()
@@ -125,7 +127,7 @@ void Player::update(float deltaTime, int** map, Player* player_ )
             {
                
             isAlive = false;
-            timeDead = 0;
+            timeDead = 3;
             
             player_->increaseScore();
             }
@@ -168,8 +170,8 @@ void Player::update(float deltaTime, int** map, Player* player_ )
     }
     else
     {
-        timeDead += deltaTime;
-        if(timeDead > 3)
+        timeDead -= deltaTime;
+        if(timeDead < 0)
         {
             isAlive = true;
             isProtected = true;
@@ -200,6 +202,10 @@ void Player::update(float deltaTime, int** map, Player* player_ )
         {
             isProtected = false;
         }
+    }
+    if(timeShowInfo > 0)
+    {
+        timeShowInfo -= deltaTime;
     }
 }
 
@@ -233,10 +239,25 @@ void Player::render()
         drawCircle(gWindow->getRenderer(), {(int)(posX + 16 + 30*std::cos((-degrees + angleBetweenGunAndPlayer)*M_PI/180)), (int)(posY + 22 +30*std::cos((90 + angleBetweenGunAndPlayer - degrees)*M_PI/180))}, 550, {255, 0, 0, 255});
     }
     }
-    std::cout << "Score = " << score << " ";
-    if (!isAlive)
+    // std::cout << "Score = " << score << " ";
+    // if (!isAlive)
+    // {
+    //     std::cout << "Respawning in: " << 3 - timeDead << " ";
+    // }
+    if(isAlive )
     {
-        std::cout << "Respawning in: " << 3 - timeDead << " ";
+        if(timeShowInfo > 0)
+        {
+            renderInfo();
+        }
+        if(showScore > 0)
+        {
+            renderScore();
+        }
+    }
+    else
+    {
+        renderRespawn();
     }
 }
 
@@ -282,4 +303,49 @@ void Player::setPos(double posX_, double posY_)
 {
     posX = posX_;
     posY = posY_;
+}
+
+void Player::renderScore()
+{
+    std::stringstream ss;
+    ss.str("");
+    ss << "Score: " << score;
+    ss << ",Monique-RegularRound20.otf,15,255,255,255";
+    std::string score = ss.str();
+    SDL_Texture* text = AssetManager::getInstance()->getTexturefromText(score);
+    SDL_Rect rect;
+    SDL_QueryTexture(text, NULL, NULL, &rect.w, &rect.h);
+    rect.x = (int)posX+center.x - rect.w / 2;
+    rect.y = (int)posY + center.y - 40;
+    SDL_RenderCopy(gWindow->getRenderer(), text, NULL, &rect);
+}
+
+void Player::renderRespawn()
+{
+    std::stringstream ss;
+    ss.str("");
+    ss << "Respawning in: " << std::setprecision(2) << std::fixed << timeDead;
+    ss << ",Monique-RegularRound20.otf,15,255,255,255";
+    std::string score = ss.str();
+    SDL_Texture* text = AssetManager::getInstance()->getTexturefromText(score);
+    SDL_Rect rect;
+    SDL_QueryTexture(text, NULL, NULL, &rect.w, &rect.h);
+    rect.x = (int)posX+center.x - rect.w / 2;
+    rect.y = (int)posY + center.y - rect.h/2;
+    SDL_RenderCopy(gWindow->getRenderer(), text, NULL, &rect);
+}
+
+void Player::renderInfo()
+{
+    std::stringstream ss;
+    ss.str("");
+    ss << "P" << playerNumber;
+    ss << ",Monique-RegularRound20.otf,15,255,255,255";
+    std::string score = ss.str();
+    SDL_Texture* text = AssetManager::getInstance()->getTexturefromText(score);
+    SDL_Rect rect;
+    SDL_QueryTexture(text, NULL, NULL, &rect.w, &rect.h);
+    rect.x = (int)posX+center.x - rect.w / 2;
+    rect.y = (int)posY + center.y - 40;
+    SDL_RenderCopy(gWindow->getRenderer(), text, NULL, &rect);
 }
