@@ -32,6 +32,15 @@ bool checkCollision(SDL_Rect rect, SDL_Point point)
     return true;
 }
 
+bool checkCollisionWindowBorder(SDL_Rect rect)
+{
+    if(rect.x < 0 || rect.x + rect.w > SCREEN_WIDTH || rect.y < 0 || rect.y + rect.h > SCREEN_HEIGHT)
+    {
+        return true;
+    }
+    return false;
+}
+
 void drawRect(SDL_Renderer* renderer, SDL_Rect rect, SDL_Color color)
 {
     SDL_SetRenderDrawColor(renderer, color.r, color.g, color.b, color.a);
@@ -60,6 +69,8 @@ Player::Player(double posX_, double posY_, double degree_)
     isCeasefire = false;
     timeCeasefire = 0;
     score = 0;
+    isProtected = true;
+    timeProtected = 4;
 }
 
 Player::~Player()
@@ -88,6 +99,7 @@ void Player::update(float deltaTime, int** map, Player* player_ )
             if(map[pos.y/32][pos.x/32] == 1)
             {
                 bulletWillBeDestroyed.push(i);
+                Mix_PlayChannel(0, AssetManager::getInstance()->getSoundBuffer("bullets_hit.wav"), 0);
             }
             if(bullet->distanceFromBegin() > 550)
             {
@@ -108,11 +120,15 @@ void Player::update(float deltaTime, int** map, Player* player_ )
     {
         if(checkCollision(getHitBox(), bullet->getHitBox()))
         {
-            isAlive = false;
-            timeDead = SDL_GetTicks();
             bulletWillBeDestroyed.push(i);
-            player_->increaseScore();
+            if(!isProtected)
+            {
+               
+            isAlive = false;
+            timeDead = 0;
             
+            player_->increaseScore();
+            }
         }
         i++;
     }
@@ -120,6 +136,7 @@ void Player::update(float deltaTime, int** map, Player* player_ )
     {
         player_->getBullets().erase(player_->getBullets().begin() + bulletWillBeDestroyed.top());
         bulletWillBeDestroyed.pop();
+         Mix_PlayChannel(0, AssetManager::getInstance()->getSoundBuffer("bullets_hit.wav"), 0);
     }
     degrees += angularVelocity * deltaTime;
     if(moveState == GO_FORWARD)
@@ -138,12 +155,12 @@ void Player::update(float deltaTime, int** map, Player* player_ )
     if(moveState == GO_BACKWARD)
     {
         posX -= velocity / 2 * std::cos(degrees * M_PI / 180) * deltaTime;
-        if(getHitBox().x < 0 || getHitBox().x + getHitBox().w > SCREEN_WIDTH || checkCollision(getHitBox(), map) || checkCollision(getHitBox(), player_->getHitBox()))
+        if(getHitBox().x < 0 || getHitBox().x + getHitBox().w > SCREEN_WIDTH || checkCollision(getHitBox(), map) || (checkCollision(getHitBox(), player_->getHitBox()) && player_->isAlive))
         {
             posX += velocity / 2 * std::cos(degrees * M_PI / 180) * deltaTime;
         }
         posY -= velocity / 2 * std::sin(degrees * M_PI / 180) * deltaTime;
-        if(getHitBox().y < 0 || getHitBox().y + getHitBox().h > SCREEN_HEIGHT ||checkCollision(getHitBox(), map) || checkCollision(getHitBox(), player_->getHitBox()))
+        if(getHitBox().y < 0 || getHitBox().y + getHitBox().h > SCREEN_HEIGHT ||checkCollision(getHitBox(), map) || (checkCollision(getHitBox(), player_->getHitBox()) && player_->isAlive))
         {
             posY += velocity / 2 * std::sin(degrees * M_PI / 180) * deltaTime;
         }
@@ -151,28 +168,39 @@ void Player::update(float deltaTime, int** map, Player* player_ )
     }
     else
     {
-        if(SDL_GetTicks() - timeDead > 3000)
+        timeDead += deltaTime;
+        if(timeDead > 3)
         {
             isAlive = true;
-            //TODO: get random position
-            do
+            isProtected = true;
+            timeProtected = 4;
+        do
             {
                 posX = rand() % SCREEN_WIDTH;
                 posY = rand() % SCREEN_HEIGHT;
                 setPos(posX, posY);
-            } while (checkCollision(getHitBox(), map) || checkCollision(getHitBox(), player_->getHitBox()));
-            degrees = 0;
+            } while (checkCollision(getHitBox(), map) || checkCollision(getHitBox(), player_->getHitBox()) || checkCollisionWindowBorder(getHitBox()));
         }
+            degrees = rand() % 360;
+    
     }
     if(isCeasefire)
     {
-        timeCeasefire += deltaTime;
-        if(timeCeasefire > 0.25)
+        timeCeasefire -= deltaTime;
+        if(timeCeasefire < 0)
         {
             isCeasefire = false;
-            timeCeasefire = 0;
+            timeCeasefire = 0.25;
         }
-    } 
+    }
+    if(isProtected)
+    {
+        timeProtected -= deltaTime;
+        if(timeProtected < 0)
+        {
+            isProtected = false;
+        }
+    }
 }
 
 void Player::render()
@@ -188,6 +216,14 @@ void Player::render()
     rect.y = posY;
     SDL_QueryTexture(playerTexture, NULL, NULL, &rect.w, &rect.h);
     SDL_RenderCopyEx(gWindow->getRenderer(), playerTexture, NULL, &rect, degrees, &center, SDL_FLIP_NONE);
+    if(isProtected)
+    {
+        SDL_Rect rect;
+        SDL_QueryTexture(AssetManager::getInstance()->getTexture("shield.png"), NULL, NULL, &rect.w, &rect.h);
+        rect.x = posX + center.x - rect.w / 2;
+        rect.y = posY + center.y - rect.h / 2;
+        SDL_RenderCopy(gWindow->getRenderer(), AssetManager::getInstance()->getTexture("shield.png"), NULL, &rect);
+    }
     if(gDevMode)
     {
         //TODO: drawhitbox and will be removed
@@ -197,7 +233,11 @@ void Player::render()
         drawCircle(gWindow->getRenderer(), {(int)(posX + 16 + 30*std::cos((-degrees + angleBetweenGunAndPlayer)*M_PI/180)), (int)(posY + 22 +30*std::cos((90 + angleBetweenGunAndPlayer - degrees)*M_PI/180))}, 550, {255, 0, 0, 255});
     }
     }
-    std::cout << "pos = {" << posX << ", " << posY << "}" << " Alive = " << isAlive << " " << " Score = " << score << " ";
+    std::cout << "Score = " << score << " ";
+    if (!isAlive)
+    {
+        std::cout << "Respawning in: " << 3 - timeDead << " ";
+    }
 }
 
 void Player::shoot()
@@ -209,16 +249,17 @@ void Player::shoot()
         //recoil
         degrees += rand() % 11 - 5;
         isCeasefire = true;
+        timeCeasefire = 0.25;
     }
 }
 
 SDL_Rect Player::getHitBox()
 {
     SDL_Rect rect;
-    rect.x = posX + center.x - 12;
-    rect.y = posY + center.y - 12;
-    rect.w = 24;
-    rect.h = 24;
+    rect.x = posX + center.x - 15;
+    rect.y = posY + center.y - 15;
+    rect.w = 30;
+    rect.h = 30;
     return rect;
 }
 

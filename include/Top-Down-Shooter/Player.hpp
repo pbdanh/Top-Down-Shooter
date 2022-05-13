@@ -5,6 +5,7 @@
 #include <stack>
 
 #include <SDL.h>
+#include <SDL_mixer.h>
 
 #include "Window.hpp"
 #include "Bullet.hpp"
@@ -48,4 +49,6 @@ class Player
         double timeCeasefire;
         SDL_Rect getHitBox();
         int score;
+        bool isProtected;
+        double timeProtected;
 };

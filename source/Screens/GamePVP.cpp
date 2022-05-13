@@ -5,11 +5,11 @@ void drawRect(SDL_Renderer* renderer, SDL_Rect rect, SDL_Color color);
 
 GamePVP::GamePVP(StateManager* stateManager) : GameScreen(stateManager)
 {   
-    player1 = new Player1(50, 50, 0);
-    player2 = new Player2(1200, 750, 0);
+    player1 = new Player1(50, 50, 90);
+    player2 = new Player2(50, 100, 0);
     createGUI();
     loadMap();
-    timeOut = 0;
+    timeOut = 120;
 }
 
 GamePVP::~GamePVP()
@@ -39,7 +39,7 @@ void GamePVP::renderScreen()
             }
         }
     }
-    std::cout << (int)(120-timeOut) << " ";//TODO: 120;
+    std::cout << (int)timeOut << " ";//TODO: 120;
     std::cout << "Player1: ";
     player1->render();
     std::cout << "Player2: ";
@@ -50,8 +50,8 @@ void GamePVP::renderScreen()
 
 void GamePVP::updateScreen(float deltaTime)
 {
-    timeOut += deltaTime;
-    if(timeOut > 120)//TODO: 120s
+    timeOut -= deltaTime;
+    if(timeOut < 0)//TODO: 120s
     {
         stateManager->p1Score = player1->getScore();
         stateManager->p2Score = player2->getScore();
