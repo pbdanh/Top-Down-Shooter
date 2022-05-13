@@ -28,7 +28,10 @@ void Player2::handleEvent(const SDL_Event& event)
                 moveState = (MoveState)((int)moveState - 1);
                 break;
             case SDLK_KP_ENTER:
-                shoot();
+                if(isAlive)
+                {
+                    shoot();
+                }
                 break;
         }
     }

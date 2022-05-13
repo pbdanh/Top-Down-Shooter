@@ -7,7 +7,8 @@ class EndScreen : public GameScreen
 public:
     EndScreen(StateManager* stateManager);
     ~EndScreen();
-    void renderScreen(SDL_Renderer *renderer);
+    //void handleEvent(const SDL_Event& event);
+    void renderScreen();
     void updateScreen(float deltaTime);
 private:
 };

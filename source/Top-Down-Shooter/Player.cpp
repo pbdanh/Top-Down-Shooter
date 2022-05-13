@@ -1,5 +1,54 @@
 #include "Player.hpp"
 
+
+bool checkCollision(SDL_Rect rect, int** map)
+{
+    SDL_Point topLeft = {rect.x, rect.y};
+    SDL_Point topRight = {rect.x + rect.w, rect.y};
+    SDL_Point bottomLeft = {rect.x, rect.y + rect.h};
+    SDL_Point bottomRight = {rect.x + rect.w, rect.y + rect.h};
+    if(map[int(topLeft.y / 32)][int(topLeft.x / 32)] == 1 || map[int(topRight.y / 32)][int(topRight.x / 32)] == 1 || map[int(bottomLeft.y / 32)][int(bottomLeft.x / 32)] == 1 || map[int(bottomRight.y / 32)][int(bottomRight.x / 32)] == 1)
+    {
+        return true;
+    }
+    return false;
+}
+
+bool checkCollision(SDL_Rect rect1, SDL_Rect rect2)
+{
+    if(rect1.x + rect1.w < rect2.x || rect1.x > rect2.x + rect2.w || rect1.y + rect1.h < rect2.y || rect1.y > rect2.y + rect2.h)
+    {
+        return false;
+    }
+    return true;
+}
+
+bool checkCollision(SDL_Rect rect, SDL_Point point)
+{
+    if(rect.x + rect.w < point.x || rect.x > point.x || rect.y + rect.h < point.y || rect.y > point.y)
+    {
+        return false;
+    }
+    return true;
+}
+
+void drawRect(SDL_Renderer* renderer, SDL_Rect rect, SDL_Color color)
+{
+    SDL_SetRenderDrawColor(renderer, color.r, color.g, color.b, color.a);
+    SDL_RenderDrawRect(renderer, &rect);
+}
+
+void drawCircle(SDL_Renderer* renderer, SDL_Point center, int radius, SDL_Color color)
+{
+    SDL_SetRenderDrawColor(renderer, color.r, color.g, color.b, color.a);
+    for(double angle = 0; angle < 2 * M_PI; angle += 0.001)
+    {
+        int x = center.x + radius * cos(angle);
+        int y = center.y + radius * sin(angle);
+        SDL_RenderDrawPoint(renderer, x, y);
+    }
+}
+
 Player::Player(double posX_, double posY_, double degree_)
 {
     posX = posX_;
@@ -10,6 +59,7 @@ Player::Player(double posX_, double posY_, double degree_)
     angularVelocity = 0;
     isCeasefire = false;
     timeCeasefire = 0;
+    score = 0;
 }
 
 Player::~Player()
@@ -21,14 +71,14 @@ void Player::handleEvent(const SDL_Event& event)
 {
 }
 
-void Player::update(float deltaTime, int** map)
+void Player::update(float deltaTime, int** map, Player* player_ )
 {
     std::stack <int> bulletWillBeDestroyed;
     int i = 0;
     for(auto bullet : bullets)
     {
         bullet->update(deltaTime);
-        SDL_Point pos = bullet->getPos();
+        SDL_Point pos = bullet->getHitBox();
         if(pos.x <= 0 || pos.x >= SCREEN_WIDTH || pos.y <= 0 || pos.y >= SCREEN_HEIGHT)
         {
             bulletWillBeDestroyed.push(i);
@@ -36,6 +86,10 @@ void Player::update(float deltaTime, int** map)
         else
         {
             if(map[pos.y/32][pos.x/32] == 1)
+            {
+                bulletWillBeDestroyed.push(i);
+            }
+            if(bullet->distanceFromBegin() > 550)
             {
                 bulletWillBeDestroyed.push(i);
             }
@@ -47,32 +101,68 @@ void Player::update(float deltaTime, int** map)
         bullets.erase(bullets.begin() + bulletWillBeDestroyed.top());
         bulletWillBeDestroyed.pop();
     }
+    if(isAlive)
+    {
+    i = 0;
+    for(auto bullet : player_->getBullets())
+    {
+        if(checkCollision(getHitBox(), bullet->getHitBox()))
+        {
+            isAlive = false;
+            timeDead = SDL_GetTicks();
+            bulletWillBeDestroyed.push(i);
+            player_->increaseScore();
+            
+        }
+        i++;
+    }
+    while(!bulletWillBeDestroyed.empty())
+    {
+        player_->getBullets().erase(player_->getBullets().begin() + bulletWillBeDestroyed.top());
+        bulletWillBeDestroyed.pop();
+    }
     degrees += angularVelocity * deltaTime;
     if(moveState == GO_FORWARD)
     {
         posX += velocity * std::cos(degrees * M_PI / 180) * deltaTime;
+        if(getHitBox().x < 0 || getHitBox().x + getHitBox().w > SCREEN_WIDTH || checkCollision(getHitBox(), map) || (checkCollision(getHitBox(), player_->getHitBox()) && player_->isAlive))
+        {
+            posX -= velocity * std::cos(degrees * M_PI / 180) * deltaTime;
+        }
         posY += velocity * std::sin(degrees * M_PI / 180) * deltaTime;
+        if(getHitBox().y < 0 || getHitBox().y + getHitBox().h > SCREEN_HEIGHT || checkCollision(getHitBox(), map) || (checkCollision(getHitBox(), player_->getHitBox()) && player_->isAlive))
+        {
+            posY -= velocity * std::sin(degrees * M_PI / 180) * deltaTime;
+        }
     }
     if(moveState == GO_BACKWARD)
     {
         posX -= velocity / 2 * std::cos(degrees * M_PI / 180) * deltaTime;
+        if(getHitBox().x < 0 || getHitBox().x + getHitBox().w > SCREEN_WIDTH || checkCollision(getHitBox(), map) || checkCollision(getHitBox(), player_->getHitBox()))
+        {
+            posX += velocity / 2 * std::cos(degrees * M_PI / 180) * deltaTime;
+        }
         posY -= velocity / 2 * std::sin(degrees * M_PI / 180) * deltaTime;
+        if(getHitBox().y < 0 || getHitBox().y + getHitBox().h > SCREEN_HEIGHT ||checkCollision(getHitBox(), map) || checkCollision(getHitBox(), player_->getHitBox()))
+        {
+            posY += velocity / 2 * std::sin(degrees * M_PI / 180) * deltaTime;
+        }
     }
-    if(posX + center.x < 0)
-    {
-        posX = 0 - center.x;
     }
-    if(posX + center.x > SCREEN_WIDTH)
+    else
     {
-        posX = SCREEN_WIDTH - center.x;
-    }
-    if(posY + center.y < 0)
-    {
-        posY = 0 - center.y;
-    }
-    if(posY + center.y > SCREEN_HEIGHT)
-    {
-        posY = SCREEN_HEIGHT - center.y-1;
+        if(SDL_GetTicks() - timeDead > 3000)
+        {
+            isAlive = true;
+            //TODO: get random position
+            do
+            {
+                posX = rand() % SCREEN_WIDTH;
+                posY = rand() % SCREEN_HEIGHT;
+                setPos(posX, posY);
+            } while (checkCollision(getHitBox(), map) || checkCollision(getHitBox(), player_->getHitBox()));
+            degrees = 0;
+        }
     }
     if(isCeasefire)
     {
@@ -82,20 +172,7 @@ void Player::update(float deltaTime, int** map)
             isCeasefire = false;
             timeCeasefire = 0;
         }
-    }
-    if(map[((int)posY+center.y)/32][((int)posX+center.x)/32] == 1)
-    {
-        if(moveState == GO_FORWARD)
-        {
-            posX -= velocity * std::cos(degrees * M_PI / 180) * deltaTime;
-            posY -= velocity * std::sin(degrees * M_PI / 180) * deltaTime;
-        }
-        if(moveState == GO_BACKWARD)
-        {
-            posX += velocity / 2 * std::cos(degrees * M_PI / 180) * deltaTime;
-            posY += velocity / 2 * std::sin(degrees * M_PI / 180) * deltaTime;
-        }
-    }  
+    } 
 }
 
 void Player::render()
@@ -104,11 +181,23 @@ void Player::render()
     {
         bullet->render();
     }
+    if(isAlive)
+    {
     SDL_Rect rect;
     rect.x = posX;
     rect.y = posY;
     SDL_QueryTexture(playerTexture, NULL, NULL, &rect.w, &rect.h);
     SDL_RenderCopyEx(gWindow->getRenderer(), playerTexture, NULL, &rect, degrees, &center, SDL_FLIP_NONE);
+    if(gDevMode)
+    {
+        //TODO: drawhitbox and will be removed
+        SDL_Rect hitBoxRect = getHitBox();
+        drawRect(gWindow->getRenderer(), hitBoxRect, {255, 0, 0, 255});
+        //TODO: draw shooting range and will be removed
+        drawCircle(gWindow->getRenderer(), {(int)(posX + 16 + 30*std::cos((-degrees + angleBetweenGunAndPlayer)*M_PI/180)), (int)(posY + 22 +30*std::cos((90 + angleBetweenGunAndPlayer - degrees)*M_PI/180))}, 550, {255, 0, 0, 255});
+    }
+    }
+    std::cout << "pos = {" << posX << ", " << posY << "}" << " Alive = " << isAlive << " " << " Score = " << score << " ";
 }
 
 void Player::shoot()
@@ -121,4 +210,35 @@ void Player::shoot()
         degrees += rand() % 11 - 5;
         isCeasefire = true;
     }
+}
+
+SDL_Rect Player::getHitBox()
+{
+    SDL_Rect rect;
+    rect.x = posX + center.x - 12;
+    rect.y = posY + center.y - 12;
+    rect.w = 24;
+    rect.h = 24;
+    return rect;
+}
+
+std::vector<Bullet*>& Player::getBullets()
+{
+    return bullets;
+}
+
+void Player::increaseScore()
+{
+    score++;
+}
+
+int Player::getScore()
+{
+    return score;
+}
+
+void Player::setPos(double posX_, double posY_)
+{
+    posX = posX_;
+    posY = posY_;
 }

@@ -19,5 +19,7 @@ public:
 
 	GameScreen * currentScreen;
 	GameScreen * nextScreen;
+	int p1Score;
+	int p2Score;
 };
 

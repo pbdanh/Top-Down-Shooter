@@ -9,6 +9,7 @@
 
 
 extern Window* gWindow;
+extern bool gDevMode;
 
 class GamePVP : public GameScreen
 {
@@ -20,9 +21,10 @@ public:
     void handleEvent(const SDL_Event& event);
 private:
     int** map;
-    std::vector<Player*> players;
+    Player1* player1;
+    Player2* player2;
     void createGUI();
-    void createPlayers();
     void goToMenu();
     void loadMap();
+    double timeOut;
 };

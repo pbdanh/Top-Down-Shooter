@@ -9,6 +9,7 @@
 #include "AssetManager.hpp"
 
 extern Window* gWindow;
+extern bool gDevMode;
 
 class Bullet
 {
@@ -18,6 +19,8 @@ public:
     void render();
     void update(float deltaTime);
     SDL_Point getPos();
+    SDL_Point getHitBox();
+    float distanceFromBegin();
 private:
     SDL_Texture* bulletTexture;
     double posX, posY;

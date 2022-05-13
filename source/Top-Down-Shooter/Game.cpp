@@ -6,6 +6,7 @@
 
 Window *gWindow = NULL;
 bool gQuit = false;
+bool gDevMode = false;
 
 Game::Game()
 {
@@ -27,7 +28,7 @@ Game::~Game()
 void Game::run()
 {   
     
-	stateManager->switchScreen(StateManager::Screen::GamePVP);
+	stateManager->switchScreen(StateManager::Screen::StartScreen);
     Uint32 deltaTime = SDL_GetTicks();
 	while (!gQuit)
     {
@@ -49,6 +50,10 @@ void Game::processInput()
         }
         else
         {
+            if(e.type == SDL_KEYDOWN && e.key.keysym.sym == SDLK_F11)
+            {  
+                gDevMode = !gDevMode;
+            }
             stateManager->currentScreen->handleEvent(e);
         }
     }

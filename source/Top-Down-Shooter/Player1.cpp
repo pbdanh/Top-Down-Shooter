@@ -28,7 +28,10 @@ void Player1::handleEvent(const SDL_Event& event)
                 moveState = (MoveState)((int)moveState - 1);
                 break;
             case SDLK_SPACE:
-                shoot();
+                if(isAlive)
+                {
+                    shoot();
+                }
                 break;
         }
     }
