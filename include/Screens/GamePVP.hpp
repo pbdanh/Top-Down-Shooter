@@ -28,4 +28,8 @@ private:
     double timeOut;
     double startingTime;
     int maxScore;
+    bool pause;
+    Button* pauseButton;
+    Button* resumeButton;
+    void switchPause();
 };

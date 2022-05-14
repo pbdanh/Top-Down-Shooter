@@ -20,12 +20,13 @@ GamePVP::GamePVP(StateManager* stateManager) : GameScreen(stateManager)
     timeOut = stateManager->time;
     startingTime = 4;
     Mix_Chunk* startGameSound = AssetManager::getInstance()->getSoundBuffer("3_2_1_go.wav");
-    Mix_PlayChannel(-1, startGameSound, 0);
+    if(gSoundOn) Mix_PlayChannel(-1, startGameSound, 0);
     maxScore = stateManager->maxScore;
     if(maxScore == 0)
     {
         maxScore = 99999;
     }
+    pause = false;
 }
 
 GamePVP::~GamePVP()
@@ -104,6 +105,14 @@ void GamePVP::renderScreen()
         rect.y = SCREEN_HEIGHT/2 - rect.h/2;
         SDL_RenderCopy(gWindow->getRenderer(), text, NULL, &rect);
     }
+    if(pause)
+    {
+        resumeButton->render();
+    }
+    else
+    {
+        pauseButton->render();
+    }
 }
 
 void GamePVP::updateScreen(float deltaTime)
@@ -114,6 +123,10 @@ void GamePVP::updateScreen(float deltaTime)
         deltaTime = 0;
     }
     else startingTime = -1;
+    if(pause)
+    {
+        deltaTime = 0;
+    }
     timeOut -= deltaTime;
     if(timeOut < 0)//TODO: 120s
     {
@@ -136,18 +149,50 @@ void GamePVP::handleEvent(const SDL_Event& event)
     if(!(startingTime > 0))
     {
         
+        
+        if(pause)
+    {
+        resumeButton->handleEvent(event);
+        if(event.type == SDL_KEYDOWN && event.key.keysym.sym == SDLK_p)
+        {
+            pause = false;
+        }
+    }
+    else
+    {
+        pauseButton->handleEvent(event);
+        if(event.type == SDL_KEYDOWN && event.key.keysym.sym == SDLK_p)
+        {
+            pause = true;
+        }
         player1->handleEvent(event);
         player2->handleEvent(event);
     }
+    }
     handleWidgetEvent(event);
+    
 }
 
 void GamePVP::createGUI()
 {
     createButton("button_home.png", {1230, 752}, std::bind(&GamePVP::goToMenu, this));
+    pauseButton = new Button("button_pause.png", {115, 15}, std::bind(&GamePVP::switchPause, this));
+    resumeButton = new Button("button_resume.png", {115, 15}, std::bind(&GamePVP::switchPause, this));
 }
 
 void GamePVP::goToMenu()
 {
     stateManager->switchScreen(StateManager::Screen::StartScreen);
+}
+
+void GamePVP::switchPause()
+{
+    if(pause)
+    {
+        pause = false;
+    }
+    else
+    {
+        pause = true;
+    }
 }

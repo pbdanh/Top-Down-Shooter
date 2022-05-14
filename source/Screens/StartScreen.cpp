@@ -18,6 +18,16 @@ void StartScreen::renderScreen()
     //render Background
     SDL_RenderCopy(gWindow->getRenderer(), AssetManager::getInstance()->getTexture("start_screen_background.png"), NULL, NULL);
     renderWidget();
+    //render author
+    {
+        SDL_Texture *text;
+        text = AssetManager::getInstance()->getTexture("PhamBaDanh.png");
+        SDL_Rect rect;
+        SDL_QueryTexture(text, NULL, NULL, &rect.w, &rect.h);
+        rect.x = SCREEN_WIDTH - 200;
+        rect.y = SCREEN_HEIGHT - 20;
+        SDL_RenderCopy(gWindow->getRenderer(), text, NULL, &rect);
+    }
 }
 
 void StartScreen::updateScreen(float deltaTime)

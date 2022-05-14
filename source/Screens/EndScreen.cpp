@@ -4,7 +4,7 @@ EndScreen::EndScreen(StateManager* stateManager) : GameScreen(stateManager)
 {
     createGUI();
     Mix_Chunk* sound = AssetManager::getInstance()->getSoundBuffer("end_screen_sound.wav");
-    Mix_PlayChannel(-1, sound, 0);
+    if(gSoundOn) Mix_PlayChannel(-1, sound, 0);
     Mix_PauseMusic();
     timePauseMusic = 5;
 }
@@ -84,7 +84,7 @@ void EndScreen::renderScreen()
 void EndScreen::updateScreen(float deltaTime)
 {
     timePauseMusic -= deltaTime;
-    if(timePauseMusic <= 0)
+    if(timePauseMusic <= 0 && !Mix_PlayingMusic())
     {
         Mix_ResumeMusic();
     }
