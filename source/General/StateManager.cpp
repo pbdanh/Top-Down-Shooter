@@ -11,6 +11,7 @@ StateManager::StateManager()
 {
 	map = 1;
 	time = 120;
+	maxScore = 0;
 }
 
 StateManager::~StateManager()
