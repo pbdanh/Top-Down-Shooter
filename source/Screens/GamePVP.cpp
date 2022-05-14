@@ -10,6 +10,7 @@ GamePVP::GamePVP(StateManager* stateManager) : GameScreen(stateManager)
     createGUI();
     loadMap();
     timeOut = 120;
+    startingTime = 4;
 }
 
 GamePVP::~GamePVP()
@@ -61,10 +62,36 @@ void GamePVP::renderScreen()
         rect.y = 20;
         SDL_RenderCopy(gWindow->getRenderer(), text, NULL, &rect);
     }
+    //render starting time
+    if(startingTime > 0)
+    {
+        std::stringstream ss;
+        if((int)startingTime == 0)
+        {
+            ss << "GO!";
+        }
+        else
+        {
+            ss << (int)startingTime;
+        }
+        std::string time = ss.str();
+        SDL_Texture* text = AssetManager::getInstance()->getTexturefromText(time+",Monique-RegularRound20.otf,100,255,255,255");
+        SDL_Rect rect;
+        SDL_QueryTexture(text, NULL, NULL, &rect.w, &rect.h);
+        rect.x = SCREEN_WIDTH/2 - rect.w/2;
+        rect.y = SCREEN_HEIGHT/2 - rect.h/2;
+        SDL_RenderCopy(gWindow->getRenderer(), text, NULL, &rect);
+    }
 }
 
 void GamePVP::updateScreen(float deltaTime)
 {
+    startingTime -= deltaTime;
+    if(startingTime > 0)
+    {
+        deltaTime = 0;
+    }
+    else startingTime = -1;
     timeOut -= deltaTime;
     if(timeOut < 0)//TODO: 120s
     {
@@ -78,9 +105,12 @@ void GamePVP::updateScreen(float deltaTime)
 
 void GamePVP::handleEvent(const SDL_Event& event)
 {
-    handleWidgetEvent(event);
-    player1->handleEvent(event);
-    player2->handleEvent(event);
+    if(!(startingTime > 0))
+    {
+        handleWidgetEvent(event);
+        player1->handleEvent(event);
+        player2->handleEvent(event);
+    }
 }
 
 void GamePVP::createGUI()
