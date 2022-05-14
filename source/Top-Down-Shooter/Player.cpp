@@ -250,9 +250,12 @@ void Player::render()
         {
             renderInfo();
         }
+        else
+        {
         if(showScore > 0)
         {
             renderScore();
+        }
         }
     }
     else
