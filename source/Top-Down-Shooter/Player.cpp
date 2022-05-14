@@ -101,7 +101,7 @@ void Player::update(float deltaTime, int** map, Player* player_ )
             if(map[pos.y/32][pos.x/32] == 1)
             {
                 bulletWillBeDestroyed.push(i);
-                Mix_PlayChannel(0, AssetManager::getInstance()->getSoundBuffer("bullets_hit.wav"), 0);
+                if(gSoundOn)Mix_PlayChannel(0, AssetManager::getInstance()->getSoundBuffer("bullets_hit.wav"), 0);
             }
             if(bullet->distanceFromBegin() > 550)
             {
@@ -138,7 +138,7 @@ void Player::update(float deltaTime, int** map, Player* player_ )
     {
         player_->getBullets().erase(player_->getBullets().begin() + bulletWillBeDestroyed.top());
         bulletWillBeDestroyed.pop();
-         Mix_PlayChannel(0, AssetManager::getInstance()->getSoundBuffer("bullets_hit.wav"), 0);
+         if(gSoundOn)Mix_PlayChannel(0, AssetManager::getInstance()->getSoundBuffer("bullets_hit.wav"), 0);
     }
     degrees += angularVelocity * deltaTime;
     if(moveState == GO_FORWARD)

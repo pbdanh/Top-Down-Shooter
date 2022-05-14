@@ -53,7 +53,6 @@ void EndScreen::handleEvent(const SDL_Event& event)
 
 void EndScreen::createGUI()
 {
-    createButton("button_music_on.png", {1200, 20}, [](){});
     createButton("button_restart.png", {555, 500}, std::bind(&EndScreen::goToGame, this));
     createButton("button_exit_for_end_screen.png", {555, 570}, []() { gQuit = true; });
     createButton("button_home.png", {1230, 752}, std::bind(&EndScreen::goToMenu, this));

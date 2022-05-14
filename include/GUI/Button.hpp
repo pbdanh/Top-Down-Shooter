@@ -7,6 +7,7 @@
 #include "Window.hpp"
 
 extern Window* gWindow;
+extern bool gSoundOn;
 
 class Button: public GUIComponent
 {

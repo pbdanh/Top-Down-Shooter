@@ -21,5 +21,7 @@ public:
 	GameScreen * nextScreen;
 	int p1Score;
 	int p2Score;
+
+	bool isSoundOn;
 };
 

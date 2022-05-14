@@ -13,6 +13,7 @@
 
 extern Window* gWindow;
 extern bool gDevMode;
+extern bool gSoundOn;
 
 class Player
 {

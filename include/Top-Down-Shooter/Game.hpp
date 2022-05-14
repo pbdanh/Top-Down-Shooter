@@ -19,4 +19,11 @@ private:
     void renderScreen();
     
     StateManager* stateManager;
+
+    Button* musicOn;
+    Button* musicOff;
+    Button* soundOn;
+    Button* soundOff;
+    void switchMusic();
+    void switchAudio();
 };

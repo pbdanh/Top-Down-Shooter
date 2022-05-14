@@ -28,7 +28,8 @@ void Button::handleEvent(const SDL_Event& e)
         {
             if (e.button.x >= rect.x && e.button.x <= rect.x + rect.w && e.button.y >= rect.y && e.button.y <= rect.y + rect.h)
             {
-                Mix_PlayChannel(-1, buttonSound, 0);
+                if(gSoundOn)
+                    Mix_PlayChannel(-1, buttonSound, 0);
                 callback();
             }
         }

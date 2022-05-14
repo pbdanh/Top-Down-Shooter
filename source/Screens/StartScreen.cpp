@@ -37,7 +37,6 @@ void StartScreen::createGUI()
     createButton("button_pvp.png", {555, 400}, std::bind(&StartScreen::startPVPGame, this));
     createButton("button_pve.png", {555, 475}, std::bind(&StartScreen::startPVEGame, this));
     createButton("button_exit.png", {555, 550}, []() { gQuit = true; });
-    createButton("button_music_on.png", {1200, 20}, std::bind(&StartScreen::switchAudioMode, this));
 }
 
 void StartScreen::startPVPGame()

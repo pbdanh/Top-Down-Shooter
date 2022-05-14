@@ -85,7 +85,6 @@ void GamePVP::handleEvent(const SDL_Event& event)
 
 void GamePVP::createGUI()
 {
-    createButton("button_music_on.png", {1200, 20}, [](){});
     createButton("button_home.png", {1230, 752}, std::bind(&GamePVP::goToMenu, this));
 }
 

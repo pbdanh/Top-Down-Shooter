@@ -8,6 +8,7 @@
 
 StateManager::StateManager()
 {
+	isSoundOn = true;
 }
 
 StateManager::~StateManager()
