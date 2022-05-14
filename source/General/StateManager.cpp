@@ -3,12 +3,14 @@
 #include "StartScreen.hpp"
 #include "GamePVP.hpp"
 #include "EndScreen.hpp"
+#include "SettingScreen.hpp"
 
 #include <iostream> //TODO:remove
 
 StateManager::StateManager()
 {
-	isSoundOn = true;
+	map = 1;
+	time = 120;
 }
 
 StateManager::~StateManager()
@@ -34,6 +36,9 @@ void StateManager::switchScreen(Screen newScreen)
 		break;
 	case Screen::EndScreen:
 		nextScreen = new EndScreen(this);
+		break;
+	case Screen::SettingScreen:
+		nextScreen = new SettingScreen(this);
 		break;
 	default:
 		break;

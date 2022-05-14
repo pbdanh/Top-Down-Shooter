@@ -3,6 +3,10 @@
 EndScreen::EndScreen(StateManager* stateManager) : GameScreen(stateManager)
 {
     createGUI();
+    Mix_Chunk* sound = AssetManager::getInstance()->getSoundBuffer("end_screen_sound.wav");
+    Mix_PlayChannel(-1, sound, 0);
+    Mix_PauseMusic();
+    timePauseMusic = 5;
 }
 
 EndScreen::~EndScreen()
@@ -20,7 +24,7 @@ void EndScreen::renderScreen()
         SDL_Rect rect;
         SDL_QueryTexture(AssetManager::getInstance()->getTexture("player_1_wins.png"), NULL, NULL, &rect.w, &rect.h);
         rect.x = (SCREEN_WIDTH - rect.w)/2;
-        rect.y = (SCREEN_HEIGHT - rect.h)/2;
+        rect.y = (SCREEN_HEIGHT - rect.h)/2 - 100;
         SDL_RenderCopy(gWindow->getRenderer(), AssetManager::getInstance()->getTexture("player_1_wins.png"), NULL, &rect);
     }
     else if(stateManager->p1Score < stateManager->p2Score)
@@ -28,7 +32,7 @@ void EndScreen::renderScreen()
         SDL_Rect rect;
         SDL_QueryTexture(AssetManager::getInstance()->getTexture("player_2_wins.png"), NULL, NULL, &rect.w, &rect.h);
         rect.x = (SCREEN_WIDTH - rect.w)/2;
-        rect.y = (SCREEN_HEIGHT - rect.h)/2;
+        rect.y = (SCREEN_HEIGHT - rect.h)/2 - 100;
         SDL_RenderCopy(gWindow->getRenderer(), AssetManager::getInstance()->getTexture("player_2_wins.png"), NULL, &rect);
     }
     else
@@ -36,14 +40,54 @@ void EndScreen::renderScreen()
         SDL_Rect rect;
         SDL_QueryTexture(AssetManager::getInstance()->getTexture("draw.png"), NULL, NULL, &rect.w, &rect.h);
         rect.x = (SCREEN_WIDTH - rect.w)/2;
-        rect.y = (SCREEN_HEIGHT - rect.h)/2;
+        rect.y = (SCREEN_HEIGHT - rect.h)/2 - 100;
         SDL_RenderCopy(gWindow->getRenderer(), AssetManager::getInstance()->getTexture("draw.png"), NULL, &rect);
+    }
+    //render player score
+    {
+        SDL_Texture* text ;
+        SDL_Rect rect;
+        
+        
+        
+        int player1Score = stateManager->p1Score;
+        std::stringstream ss;
+        ss << "Player 1: ";
+        ss << player1Score;
+        std::string score = ss.str();
+        text = AssetManager::getInstance()->getTexturefromText(score+",Monique-RegularRound20.otf,30,255,255,255");
+        SDL_QueryTexture(text, NULL, NULL, &rect.w, &rect.h);
+        rect.x = SCREEN_WIDTH / 2 - 120 - rect.w;
+        rect.y = 420;
+        SDL_RenderCopy(gWindow->getRenderer(), text, NULL, &rect);
+    }
+    {
+        SDL_Texture* text ;
+        SDL_Rect rect;
+        
+        
+        
+        int player2Score = stateManager->p2Score;
+        std::stringstream ss;
+        ss << "Player 2: ";
+        ss << player2Score;
+        std::string score = ss.str();
+        text = AssetManager::getInstance()->getTexturefromText(score+",Monique-RegularRound20.otf,30,255,255,255");
+        SDL_QueryTexture(text, NULL, NULL, &rect.w, &rect.h);
+        rect.x = SCREEN_WIDTH / 2 + 120;
+        rect.y = 420;
+        SDL_RenderCopy(gWindow->getRenderer(), text, NULL, &rect);
     }
     renderWidget();
 }
 
 void EndScreen::updateScreen(float deltaTime)
 {
+    timePauseMusic -= deltaTime;
+    if(timePauseMusic <= 0)
+    {
+        Mix_ResumeMusic();
+    }
 }
 
 void EndScreen::handleEvent(const SDL_Event& event)

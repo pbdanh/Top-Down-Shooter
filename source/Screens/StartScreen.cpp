@@ -41,7 +41,7 @@ void StartScreen::createGUI()
 
 void StartScreen::startPVPGame()
 {
-    stateManager->switchScreen(StateManager::Screen::GamePVP);
+    stateManager->switchScreen(StateManager::Screen::SettingScreen);
 }
 
 void StartScreen::startPVEGame()

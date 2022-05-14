@@ -25,7 +25,7 @@ private:
     Player2* player2;
     void createGUI();
     void goToMenu();
-    void loadMap();
     double timeOut;
     double startingTime;
+    int maxScore;
 };

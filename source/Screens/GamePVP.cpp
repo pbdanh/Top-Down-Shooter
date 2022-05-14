@@ -8,9 +8,24 @@ GamePVP::GamePVP(StateManager* stateManager) : GameScreen(stateManager)
     player1 = new Player1(50, 50, 90);
     player2 = new Player2(1280-50-30, 800-50-30, -90);
     createGUI();
-    loadMap();
-    timeOut = 120;
+    if(stateManager->map == 1)
+    {
+        map = AssetManager::getInstance()->getMap("map_01.data");
+    }
+    else
+    {
+        map = AssetManager::getInstance()->getMap("map_02.data");
+
+    }
+    timeOut = stateManager->time;
     startingTime = 4;
+    Mix_Chunk* startGameSound = AssetManager::getInstance()->getSoundBuffer("3_2_1_go.wav");
+    Mix_PlayChannel(-1, startGameSound, 0);
+    maxScore = stateManager->maxScore;
+    if(maxScore == 0)
+    {
+        maxScore = 99999;
+    }
 }
 
 GamePVP::~GamePVP()
@@ -20,7 +35,14 @@ GamePVP::~GamePVP()
 void GamePVP::renderScreen()
 {
     //render background
-    SDL_RenderCopy(gWindow->getRenderer(),AssetManager::getInstance()->getTexture("map_test.png"), NULL, NULL);
+    if(stateManager->map == 1)
+    {
+        SDL_RenderCopy(gWindow->getRenderer(), AssetManager::getInstance()->getTexture("map_01.png"), NULL, NULL);
+    }
+    else
+    {
+        SDL_RenderCopy(gWindow->getRenderer(), AssetManager::getInstance()->getTexture("map_02.png"), NULL, NULL);
+    }
     
     //TODO: remove
     if(gDevMode)
@@ -101,16 +123,23 @@ void GamePVP::updateScreen(float deltaTime)
     }
     player1->update(deltaTime, map, player2);
     player2->update(deltaTime, map, player1);
+    if(std::max(player1->getScore(), player2->getScore()) >= maxScore)
+    {
+        stateManager->p1Score = player1->getScore();
+        stateManager->p2Score = player2->getScore();
+        stateManager->switchScreen(StateManager::Screen::EndScreen);
+    }
 }
 
 void GamePVP::handleEvent(const SDL_Event& event)
 {
     if(!(startingTime > 0))
     {
-        handleWidgetEvent(event);
+        
         player1->handleEvent(event);
         player2->handleEvent(event);
     }
+    handleWidgetEvent(event);
 }
 
 void GamePVP::createGUI()
@@ -121,9 +150,4 @@ void GamePVP::createGUI()
 void GamePVP::goToMenu()
 {
     stateManager->switchScreen(StateManager::Screen::StartScreen);
-}
-
-void GamePVP::loadMap()
-{
-    map = AssetManager::getInstance()->getMap("map_PVP.data");
 }

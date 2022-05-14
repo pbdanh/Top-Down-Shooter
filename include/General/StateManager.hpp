@@ -11,6 +11,7 @@ public:
 	enum class Screen
 	{
 		StartScreen,
+		SettingScreen,
 		GamePVP,
 		EndScreen
 	};
@@ -22,6 +23,8 @@ public:
 	int p1Score;
 	int p2Score;
 
-	bool isSoundOn;
+	int time;
+	int map;
+	int maxScore;
 };
 
