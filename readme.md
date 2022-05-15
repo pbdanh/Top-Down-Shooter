@@ -42,4 +42,8 @@ Player2:
 F11: dev mode
 
 ## Asset credits
-https://kenney.nl/assets/topdown-shooter
+Tiled: https://kenney.nl/assets/topdown-shooter
+
+Sound: https://www.zapsplat.com/
+
+Music: https://www.fesliyanstudios.com/
