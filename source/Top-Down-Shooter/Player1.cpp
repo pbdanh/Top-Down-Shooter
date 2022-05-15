@@ -4,6 +4,12 @@ Player1::Player1(double posX_, double posY_, double degree_) : Player(posX_, pos
 {
     playerTexture = AssetManager::getInstance()->getTexture("p1.png");
     playerNumber = 1;
+    isADown = false;
+    isDDown = false;
+    isWDown = false;
+    isSDown = false;
+    isMDown = false;
+    isKP0Down = false;
 }
 
 Player1::~Player1()
@@ -18,14 +24,18 @@ void Player1::handleEvent(const SDL_Event& event)
         {
             case SDLK_a:
                 angularVelocity -= maxAngularVelocity;
+                isADown = true;
                 break;
             case SDLK_d:
                 angularVelocity += maxAngularVelocity;
+                isDDown = true;
                 break;
             case SDLK_w:
                 moveState = (MoveState)((int)moveState + 1);
+                isWDown = true;
                 break;
             case SDLK_s:
+                isSDown = true;
                 moveState = (MoveState)((int)moveState - 1);
                 break;
             case SDLK_SPACE:
@@ -35,9 +45,11 @@ void Player1::handleEvent(const SDL_Event& event)
                 }
                 break;
             case SDLK_m:
+                isMDown = true;
                 showScore += 1;
                 break;
             case SDLK_KP_0:
+                isKP0Down = true;
                 showScore += 1;
                 break;
         }
@@ -49,24 +61,59 @@ void Player1::handleEvent(const SDL_Event& event)
             switch(event.key.keysym.sym)
             {
                 case SDLK_a:
-                    angularVelocity += maxAngularVelocity;
+                    if(isADown)
+                    {
+                        angularVelocity += maxAngularVelocity;
+                        isADown = false;
+                    }
                     break;
                 case SDLK_d:
-                    angularVelocity -= maxAngularVelocity;
+                    if(isDDown)
+                    {
+                        angularVelocity -= maxAngularVelocity;
+                        isDDown = false;
+                    }
                     break;
                 case SDLK_w:
-                    moveState = (MoveState)((int)moveState - 1);
+                    if(isWDown)
+                    {
+                        moveState = (MoveState)((int)moveState - 1);
+                        isWDown = false;
+                    }
                     break;
                 case SDLK_s:
-                    moveState = (MoveState)((int)moveState + 1);
+                    if(isSDown)
+                    {
+                        moveState = (MoveState)((int)moveState + 1);
+                        isSDown = false;
+                    }
                     break;
                 case SDLK_m:
-                showScore -= 1;
-                break;
-            case SDLK_KP_0:
-                showScore -= 1;
-                break;
+                    if(isMDown)
+                    {
+                        showScore -= 1;
+                        isMDown = false;
+                    }
+                    break;
+                case SDLK_KP_0:
+                    if(isKP0Down);
+                    {
+                        showScore -= 1;
+                        isKP0Down = false;
+                    }
+                    break;
             }
         }
     }
+}
+void Player1::reset()
+{
+    isADown = false;
+    isSDown = false;
+    isDDown = false;
+    isWDown = false;
+    isMDown = false;
+    isKP0Down = false;
+    angularVelocity = 0;
+    moveState = STAND;
 }

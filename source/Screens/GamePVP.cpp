@@ -126,6 +126,7 @@ void GamePVP::updateScreen(float deltaTime)
     if(pause)
     {
         deltaTime = 0;
+        player1->reset();
     }
     timeOut -= deltaTime;
     if(timeOut < 0)//TODO: 120s

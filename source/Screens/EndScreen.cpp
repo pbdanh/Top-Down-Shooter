@@ -84,7 +84,7 @@ void EndScreen::renderScreen()
 void EndScreen::updateScreen(float deltaTime)
 {
     timePauseMusic -= deltaTime;
-    if(timePauseMusic <= 0 && !Mix_PlayingMusic())
+    if(timePauseMusic <= 0 && Mix_PausedMusic())
     {
         Mix_ResumeMusic();
     }

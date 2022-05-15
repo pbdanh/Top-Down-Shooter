@@ -18,10 +18,6 @@ bool Window::init()
         std::cout << "SDL could not initialize! SDL_Error: " << SDL_GetError() << std::endl;
         return false;
     }
-    else
-    {
-        std::cout << "SDL initialized!" << std::endl;
-    }
     if(!SDL_SetHint(SDL_HINT_RENDER_SCALE_QUALITY, "1"))
     {
         std::cout << "Warning: Linear texture filtering not enabled!" << std::endl;
@@ -32,10 +28,6 @@ bool Window::init()
         std::cout << "Window could not be created! SDL_Error: " << SDL_GetError() << std::endl;
         return false;
     }
-    else
-    {
-        std::cout << "Window created!" << std::endl;
-    }
     renderer = SDL_CreateRenderer(window, -1, SDL_RENDERER_ACCELERATED | SDL_RENDERER_PRESENTVSYNC );
     if(renderer == NULL)
     {
@@ -45,7 +37,6 @@ bool Window::init()
     else
     {
         SDL_SetRenderDrawColor(renderer, 0, 164, 69, 255);
-        std::cout << "Renderer created!" << std::endl;
     }
     int imgFlags = IMG_INIT_PNG;
     if(!(IMG_Init(imgFlags) & imgFlags))
@@ -53,27 +44,15 @@ bool Window::init()
         std::cout << "SDL_image could not initialize! SDL_image Error: " << IMG_GetError() << std::endl;
         return false;
     }
-    else
-    {
-        std::cout << "SDL_image initialized!" << std::endl;
-    }
     if(TTF_Init() == -1)
     {
         std::cout << "SDL_ttf could not initialize! SDL_ttf Error: " << TTF_GetError() << std::endl;
         return false;
     }
-    else
-    {
-        std::cout << "SDL_ttf initialized!" << std::endl;
-    }
     if(Mix_OpenAudio(44100, MIX_DEFAULT_FORMAT, 2, 2048) < 0)
     {
         std::cout << "SDL_mixer could not initialize! SDL_mixer Error: " << Mix_GetError() << std::endl;
         return false;
-    }
-    else
-    {
-        std::cout << "SDL_mixer initialized!" << std::endl;
     }
     return true;
 }
