@@ -37,6 +37,7 @@ class Player
         void renderScore();
         void renderRespawn();
         void renderInfo();
+        void setShowScore();
     protected:
         void shoot();
         SDL_Texture* playerTexture;
@@ -59,4 +60,5 @@ class Player
         int showScore;
         double timeShowInfo;
         int playerNumber;
+        double timeShowScore;
 };

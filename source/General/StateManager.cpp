@@ -4,6 +4,7 @@
 #include "GamePVP.hpp"
 #include "EndScreen.hpp"
 #include "SettingScreen.hpp"
+#include "AboutScreen.hpp"
 
 #include <iostream> //TODO:remove
 
@@ -40,6 +41,9 @@ void StateManager::switchScreen(Screen newScreen)
 		break;
 	case Screen::SettingScreen:
 		nextScreen = new SettingScreen(this);
+		break;
+	case Screen::AboutScreen:
+		nextScreen = new AboutScreen(this);
 		break;
 	default:
 		break;

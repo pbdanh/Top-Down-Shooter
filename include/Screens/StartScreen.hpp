@@ -23,4 +23,5 @@ private:
     void startPVEGame();
     void exitGame();
     void switchAudioMode();
+    void gotoAboutScreen();
 };

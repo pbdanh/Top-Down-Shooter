@@ -128,6 +128,7 @@ void Player::update(float deltaTime, int** map, Player* player_ )
                
             isAlive = false;
             timeDead = 3;
+            player_ ->setShowScore();
             
             player_->increaseScore();
             }
@@ -207,6 +208,10 @@ void Player::update(float deltaTime, int** map, Player* player_ )
     {
         timeShowInfo -= deltaTime;
     }
+    if(timeShowScore>0)
+    {
+        timeShowScore -= deltaTime;
+    }
 }
 
 void Player::render()
@@ -252,7 +257,7 @@ void Player::render()
         }
         else
         {
-        if(showScore > 0)
+        if(showScore > 0 || timeShowScore > 0)
         {
             renderScore();
         }
@@ -351,4 +356,9 @@ void Player::renderInfo()
     rect.x = (int)posX+center.x - rect.w / 2;
     rect.y = (int)posY + center.y - 40;
     SDL_RenderCopy(gWindow->getRenderer(), text, NULL, &rect);
+}
+
+void Player::setShowScore()
+{
+    timeShowScore = 5;
 }

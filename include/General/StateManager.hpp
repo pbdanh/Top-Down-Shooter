@@ -13,7 +13,8 @@ public:
 		StartScreen,
 		SettingScreen,
 		GamePVP,
-		EndScreen
+		EndScreen,
+		AboutScreen
 	};
 
 	void switchScreen(Screen newScreen);

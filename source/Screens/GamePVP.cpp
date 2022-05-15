@@ -85,6 +85,20 @@ void GamePVP::renderScreen()
         rect.y = 20;
         SDL_RenderCopy(gWindow->getRenderer(), text, NULL, &rect);
     }
+    //render max score
+    {
+        std::stringstream ss;
+        ss << "Max Score: ";
+        if(maxScore == 99999)ss << "Unlimited";
+        else ss << maxScore;
+        std::string score = ss.str();
+        SDL_Texture* text = AssetManager::getInstance()->getTexturefromText(score+",Monique-RegularRound20.otf,30,255,255,255");
+        SDL_Rect rect;
+        SDL_QueryTexture(text, NULL, NULL, &rect.w, &rect.h);
+        rect.x = SCREEN_WIDTH/2 - rect.w/2;
+        rect.y = 20;
+        SDL_RenderCopy(gWindow->getRenderer(), text, NULL, &rect);
+    }
     //render starting time
     if(startingTime > 0)
     {
