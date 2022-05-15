@@ -25,7 +25,7 @@ void drawRect(SDL_Renderer* renderer, SDL_Rect rect, SDL_Color color);
 void EndScreen::renderScreen()
 {
     //load background
-    SDL_RenderCopy(gWindow->getRenderer(), AssetManager::getInstance()->getTexture("end_screen_background.bmp"), NULL, NULL);
+    SDL_RenderCopy(gWindow->getRenderer(), AssetManager::getInstance()->getTexture("end_screen_background.png"), NULL, NULL);
     if(stateManager->p1Score > stateManager->p2Score)
     {
         SDL_Rect rect;
