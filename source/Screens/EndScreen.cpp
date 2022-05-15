@@ -5,7 +5,7 @@ EndScreen::EndScreen(StateManager* stateManager) : GameScreen(stateManager)
     createGUI();
     Mix_Chunk* sound = AssetManager::getInstance()->getSoundBuffer("end_screen_sound.wav");
     if(gSoundOn) Mix_PlayChannel(-1, sound, 0);
-    if(!Mix_PausedMusic)
+    if(!Mix_PausedMusic())
     {
         Mix_PauseMusic();
         timePauseMusic = 5;
