@@ -2,6 +2,8 @@
 
 A small 2D, SDL2 Game written in C++ featuring move, shoot, collision and more!
 
+![](media/graphics/start_screen_background.png)
+
 Only dependencies are the SDL2 libraries.
 
 Project organization based on https://github.com/TycheBooker/Memory-CPP
