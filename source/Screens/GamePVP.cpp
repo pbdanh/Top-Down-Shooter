@@ -1,5 +1,14 @@
 #include "GamePVP.hpp"
 
+
+bool checkCollision(SDL_Rect rect, int** map);
+
+bool checkCollision(SDL_Rect rect1, SDL_Rect rect2);
+
+bool checkCollision(SDL_Rect rect, SDL_Point point);
+
+bool checkCollisionWindowBorder(SDL_Rect rect);
+
 //TODO: remove
 void drawRect(SDL_Renderer* renderer, SDL_Rect rect, SDL_Color color);
 
@@ -69,6 +78,10 @@ void GamePVP::renderScreen()
     player1->render();
     // std::cout << "Player2: ";
     player2->render();
+    for(auto& item : items)
+    {
+        item->render();
+    }
     // std::cout << std::endl;
     renderWidget();
     //render time remaining
@@ -141,6 +154,14 @@ void GamePVP::updateScreen(float deltaTime)
     {
         deltaTime = 0;
         player1->reset();
+        player2->reset();
+    }
+    if(startingTime < 0 && !pause)
+    {
+        if(rand()%1200 == 0)
+        {
+            createItem();
+        }
     }
     timeOut -= deltaTime;
     if(timeOut < 0)//TODO: 120s
@@ -149,8 +170,8 @@ void GamePVP::updateScreen(float deltaTime)
         stateManager->p2Score = player2->getScore();
         stateManager->switchScreen(StateManager::Screen::EndScreen);
     }
-    player1->update(deltaTime, map, player2);
-    player2->update(deltaTime, map, player1);
+    player1->update(deltaTime, map, player2, items);
+    player2->update(deltaTime, map, player1, items);
     if(std::max(player1->getScore(), player2->getScore()) >= maxScore)
     {
         stateManager->p1Score = player1->getScore();
@@ -210,4 +231,21 @@ void GamePVP::switchPause()
     {
         pause = true;
     }
+}
+
+void GamePVP::createItem()
+{
+    SDL_Rect rect;
+    do
+    {
+        int x = rand()%SCREEN_WIDTH;
+        int y = rand()%SCREEN_HEIGHT;
+        rect.x = x;
+        rect.y = y;
+        SDL_Texture* itemTexture = AssetManager::getInstance()->getTexture("item.png");
+        SDL_QueryTexture(itemTexture, NULL, NULL, &rect.w, &rect.h);
+        
+    } while(checkCollision(rect, player1->getHitBox()) || checkCollision(rect, player2->getHitBox()) || checkCollision(rect, map) || checkCollisionWindowBorder(rect));
+    Item* item = new Item(rect.x, rect.y);
+    items.push_back(item);
 }

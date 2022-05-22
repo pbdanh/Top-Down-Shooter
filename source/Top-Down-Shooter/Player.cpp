@@ -84,7 +84,7 @@ void Player::handleEvent(const SDL_Event& event)
 {
 }
 
-void Player::update(float deltaTime, int** map, Player* player_ )
+void Player::update(float deltaTime, int** map, Player* player_ , std::vector<Item*>& items)
 {
     std::stack <int> bulletWillBeDestroyed;
     int i = 0;
@@ -140,6 +140,35 @@ void Player::update(float deltaTime, int** map, Player* player_ )
         player_->getBullets().erase(player_->getBullets().begin() + bulletWillBeDestroyed.top());
         bulletWillBeDestroyed.pop();
          if(gSoundOn)Mix_PlayChannel(0, AssetManager::getInstance()->getSoundBuffer("bullets_hit.wav"), 0);
+    }
+    i = 0;
+    std::stack<int> itemWillBeDestroyed;
+    for(auto item : items)
+    {
+        if(checkCollision(getHitBox(), item->getRect()))
+        {
+            int type = rand()%2;
+            switch (type)
+            {
+            case 0:
+                isProtected = true;
+                timeProtected = 6;
+                break;
+            case 1:
+                velocity = 350;
+                timeSpeedUp = 6;
+                break;
+            default:
+                break;
+            }
+            itemWillBeDestroyed.push(i);
+        }
+        i++;
+    }
+    while(!itemWillBeDestroyed.empty())
+    {
+        items.erase(items.begin() + itemWillBeDestroyed.top());
+        itemWillBeDestroyed.pop();
     }
     degrees += angularVelocity * deltaTime;
     if(moveState == GO_FORWARD)
@@ -211,6 +240,15 @@ void Player::update(float deltaTime, int** map, Player* player_ )
     if(timeShowScore>0)
     {
         timeShowScore -= deltaTime;
+    }
+    if(timeSpeedUp > 0)
+    {
+        timeSpeedUp -= deltaTime;
+        if(timeSpeedUp < 0)
+        {
+            velocity = 200;
+            timeSpeedUp = -1;
+        }
     }
 }
 

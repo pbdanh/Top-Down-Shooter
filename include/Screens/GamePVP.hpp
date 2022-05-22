@@ -6,6 +6,7 @@
 #include "Player.hpp"
 #include "Player1.hpp"
 #include "Player2.hpp"
+#include "Item.hpp"
 
 
 extern Window* gWindow;
@@ -31,5 +32,7 @@ private:
     bool pause;
     Button* pauseButton;
     Button* resumeButton;
+    std::vector <Item*> items;
     void switchPause();
+    void createItem();
 };

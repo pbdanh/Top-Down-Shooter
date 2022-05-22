@@ -10,6 +10,7 @@
 
 #include "Window.hpp"
 #include "Bullet.hpp"
+#include "Item.hpp"
 
 extern Window* gWindow;
 extern bool gDevMode;
@@ -21,7 +22,7 @@ class Player
         Player(double posX_, double posY_, double degree_);
         ~Player();
         virtual void handleEvent(const SDL_Event& event);
-        void update(float deltaTime, int** map, Player* player_);
+        void update(float deltaTime, int** map, Player* player_, std::vector<Item*>& items);
         void render();
         enum MoveState
         {
@@ -38,12 +39,13 @@ class Player
         void renderRespawn();
         void renderInfo();
         void setShowScore();
+        SDL_Rect getHitBox();
     protected:
         void shoot();
         SDL_Texture* playerTexture;
         SDL_Point center = {16, 22};
         double angleBetweenGunAndPlayer = -17;
-        const double velocity = 200;
+        double velocity = 200;
         const double maxAngularVelocity = 75;
         double posX, posY;
         double degrees;
@@ -53,7 +55,6 @@ class Player
         std::vector<Bullet*> bullets;
         bool isCeasefire;
         double timeCeasefire;
-        SDL_Rect getHitBox();
         int score;
         bool isProtected;
         double timeProtected;
@@ -61,4 +62,5 @@ class Player
         double timeShowInfo;
         int playerNumber;
         double timeShowScore;
+        double timeSpeedUp;
 };
